@@ -1,6 +1,9 @@
 package info.sasekazu.photofem_android;
 
 import info.sasekazu.photofem_android.StateManager.State;
+
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
@@ -12,6 +15,11 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.triangulate.DelaunayTriangulationBuilder;
 
 public class Main extends Activity {
 	
@@ -50,6 +58,7 @@ public class Main extends Activity {
 		
 		// Initialize StateManager
 		stateManager = new StateManager(tv);
+		wv.setStateManager(stateManager);
 		
 		// Button Layout
 		LinearLayout buttonLayout = new LinearLayout(this);
@@ -89,7 +98,13 @@ public class Main extends Activity {
 		@Override
 		public void onClick(View v) {
 			stateManager.setState(State.GENERATE_MESH);
-			
+			DelaunayTriangulationBuilder dtb = new DelaunayTriangulationBuilder();
+			ArrayList<Coordinate> vertices = wv.getVertices();
+			dtb.setSites(vertices);
+			MultiLineString mls = (MultiLineString)dtb.getEdges(new GeometryFactory());
+			wv.setEdges(mls);
+			stateManager.setState(State.CALC_PHYSICS);
+			wv.reflesh();
 		}
 	}
 	
