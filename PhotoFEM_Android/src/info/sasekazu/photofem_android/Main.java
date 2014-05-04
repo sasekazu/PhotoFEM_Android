@@ -1,7 +1,7 @@
 package info.sasekazu.photofem_android;
 
+import info.sasekazu.photofem_android.StateManager.State;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -14,6 +14,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class Main extends Activity {
+	
+	StateManager stateManager;
+	
+	private WorldView wv;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +36,7 @@ public class Main extends Activity {
 		layout.setOrientation(LinearLayout.VERTICAL);
 		
 		// World View
-		WorldView wv = new WorldView(this);
+		wv = new WorldView(this);
 		wv.setLayoutParams(new LinearLayout.LayoutParams(w, (int)(h*0.7)));
 		layout.addView(wv);
 		
@@ -43,6 +47,9 @@ public class Main extends Activity {
 		tv.setBackgroundColor(Color.argb(255, 127, 255, 212)); // aquamarine R:127 G:255 B:212
 		tv.setText("Message Text View");
 		layout.addView(tv);
+		
+		// Initialize StateManager
+		stateManager = new StateManager(tv);
 		
 		// Button Layout
 		LinearLayout buttonLayout = new LinearLayout(this);
@@ -68,16 +75,12 @@ public class Main extends Activity {
 		setContentView(layout);
 	}
 	
-	
 	// Adapter Class for Reset Button Listener
 	class ResetButtonAdapter implements android.view.View.OnClickListener{
 		@Override
 		public void onClick(View v) {
-			AlertDialog.Builder ad = new AlertDialog.Builder(Main.this);
-			ad.setTitle("notice");
-			ad.setMessage("Reset pushed.");
-			ad.setPositiveButton("OK", null);
-			ad.show();
+			stateManager.setState(State.DRAW_OUTLINE);
+			wv.reset();
 		}
 	}
 	
@@ -85,11 +88,7 @@ public class Main extends Activity {
 	class MeshButtonAdapter implements android.view.View.OnClickListener{
 		@Override
 		public void onClick(View v) {
-			AlertDialog.Builder ad = new AlertDialog.Builder(Main.this);
-			ad.setTitle("notice");
-			ad.setMessage("Mesh pushed.");
-			ad.setPositiveButton("OK", null);
-			ad.show();
+			stateManager.setState(State.GENERATE_MESH);
 		}
 	}
 	
