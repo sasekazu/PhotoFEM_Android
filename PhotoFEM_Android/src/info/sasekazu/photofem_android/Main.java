@@ -89,6 +89,7 @@ public class Main extends Activity {
 		@Override
 		public void onClick(View v) {
 			stateManager.setState(State.GENERATE_MESH);
+			
 		}
 	}
 	

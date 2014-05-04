@@ -12,6 +12,8 @@ import android.graphics.PointF;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.vividsolutions.jts.geom.Coordinate;
+
 /**
  * @author sase
  *
