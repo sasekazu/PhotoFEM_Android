@@ -110,6 +110,11 @@ public class ClosedCurve {
 	public LinearRing getLinearRing() {
 		return linearRing;
 	}
+	
+	public ArrayList<Coordinate> getVertices(){
+		return new ArrayList<Coordinate>(coords);
+	}
+
 
 
 }

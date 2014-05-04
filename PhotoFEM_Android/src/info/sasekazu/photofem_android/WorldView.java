@@ -148,6 +148,7 @@ public class WorldView extends View {
 	// getter
 	
 	public ArrayList<Coordinate> getVertices(){
+		/*
 		ArrayList<Coordinate> tmp = new ArrayList<Coordinate>();
 		for(int i=0; i<outline.closedCurveNum(); i++){
 			for(int j=0; j<outline.coodNum(i); j++){
@@ -155,6 +156,8 @@ public class WorldView extends View {
 			}
 		}
 		return tmp;
+		*/
+		return outline.getVertices();
 	}
 	
 	// setter

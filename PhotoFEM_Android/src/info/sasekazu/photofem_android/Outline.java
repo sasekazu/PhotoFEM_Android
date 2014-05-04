@@ -48,6 +48,16 @@ public class Outline {
 		cc.clear();
 		cc.add(new ClosedCurve(minlen));
 	}
+	
+	public ArrayList<Coordinate> getVertices(){
+		ArrayList<Coordinate> tmp = new ArrayList<Coordinate>();
+		for(int i=0; i<cc.size(); i++){
+			tmp.addAll(cc.get(i).getVertices());
+		}
+		return tmp;
+	}
+
+
 
 	
 	// is**
