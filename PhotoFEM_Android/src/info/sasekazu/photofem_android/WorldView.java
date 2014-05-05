@@ -15,9 +15,6 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.Point;
 
 /**
  * @author sase
@@ -29,8 +26,10 @@ public class WorldView extends View {
 	private Path path = new Path();
 	private boolean stateInitFlag = false; 
 	private StateManager stateManager;
-	private MultiLineString edges;
-	private Outline outline = new Outline(20);
+	private Outline outline = new Outline(40);
+	
+	private float[] vtx;
+	private int[] idx;
 
 	public WorldView(Context context) {
 		super(context);
@@ -77,37 +76,28 @@ public class WorldView extends View {
 		}
 		// CALC_PHYSICS
 		else if(state == StateManager.State.CALC_PHYSICS){
-			// Draw edges
-			int nEds = edges.getNumGeometries();
-			LineString ls;
-			Point start, end;
-			for(int i=0; i<nEds; i++){
-				ls = (LineString)edges.getGeometryN(i);
-				start = ls.getStartPoint();
-				end = ls.getEndPoint();
-				canvas.drawLine((float)start.getX(), (float)start.getY(), (float)end.getX(), (float)end.getY(), paint);
-			}
+			
 			// Draw vertices
 			paint.setStyle(Paint.Style.FILL_AND_STROKE);
-			for(int i=0; i<outline.closedCurveNum(); i++){
-				for(int j=0; j<outline.coodNum(i); j++){
-					canvas.drawCircle((float)outline.get(i, j).x,  (float)outline.get(i, j).y, 3, paint);
-				}
+			int vertnum = vtx.length/3;
+			for(int i=0; i<vertnum; i++){
+				canvas.drawCircle(vtx[3*i+0], vtx[3*i+1], 3, paint);
 			}
-			// Draw outline
+			
+			// Draw triangles
+			int trinum = idx.length/3;
 			path.reset();
-			for(int i=0; i<outline.closedCurveNum(); i++){
-				if(outline.coodNum(i)>0){
-					path.moveTo((float)outline.get(i, 0).x, (float)outline.get(i, 0).y);
-					for(int j=1; j<outline.coodNum(i); j++){
-						path.lineTo((float)outline.get(i, j).x, (float)outline.get(i, j).y);
-					}
-				}
+			for(int i=0; i<trinum; i++){
+				path.moveTo(vtx[3*idx[3*i+0]+0], vtx[3*idx[3*i+0]+1]);
+				path.lineTo(vtx[3*idx[3*i+1]+0], vtx[3*idx[3*i+1]+1]);
+				path.lineTo(vtx[3*idx[3*i+2]+0], vtx[3*idx[3*i+2]+1]);
+				path.lineTo(vtx[3*idx[3*i+0]+0], vtx[3*idx[3*i+0]+1]);
 			}
 			paint.setStyle(Paint.Style.STROKE);
 			paint.setStrokeWidth(2);
 			canvas.drawPath(path, paint);
 			paint.setStrokeWidth(1);
+			
 		}
 	}
 
@@ -148,23 +138,14 @@ public class WorldView extends View {
 	// getter
 	
 	public ArrayList<Coordinate> getVertices(){
-		/*
-		ArrayList<Coordinate> tmp = new ArrayList<Coordinate>();
-		for(int i=0; i<outline.closedCurveNum(); i++){
-			for(int j=0; j<outline.coodNum(i); j++){
-				tmp.add(new Coordinate(outline.get(i,j).x, outline.get(i,j).y, 0));
-			}
-		}
-		return tmp;
-		*/
 		return outline.getVertices();
 	}
 	
-	// setter
-	
-	public void setEdges(MultiLineString edges){
-		this.edges = edges;
+	public Outline getOutline(){
+		return new Outline(outline);
 	}
+	
+	// setter
 	
 	public void setStateManager(StateManager stateManager){
 		this.stateManager = stateManager;
@@ -172,4 +153,11 @@ public class WorldView extends View {
 		this.stateInitFlag = true;	// now onDraw() goes actual draw phase
 	}
 	
+	public void setVertices(float vert[]){
+		vtx = vert.clone();
+	}
+	
+	public void setIndices(int indices[]){
+		this.idx = indices.clone();
+	}
 }

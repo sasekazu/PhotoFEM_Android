@@ -107,14 +107,14 @@ public class ClosedCurve {
 
 	// getter
 	
-	public LinearRing getLinearRing() {
-		return linearRing;
-	}
-	
 	public ArrayList<Coordinate> getVertices(){
 		return new ArrayList<Coordinate>(coords);
 	}
-
+	
+	public LinearRing getLinearRing(){
+		return linearRing;
+	}
+	
 
 
 }

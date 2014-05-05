@@ -1,9 +1,6 @@
 package info.sasekazu.photofem_android;
 
 import info.sasekazu.photofem_android.StateManager.State;
-
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
@@ -15,11 +12,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.triangulate.DelaunayTriangulationBuilder;
 
 public class Main extends Activity {
 	
@@ -50,7 +42,7 @@ public class Main extends Activity {
 		
 		// Message Text View
 		TextView tv = new TextView(this);
-		tv.setLayoutParams(new LinearLayout.LayoutParams(w, (int)(h*0.1)));
+		tv.setLayoutParams(new LinearLayout.LayoutParams(w, (int)(h*0.05)));
 		tv.setPadding(10, 10, 10, 10);
 		tv.setBackgroundColor(Color.argb(255, 127, 255, 212)); // aquamarine R:127 G:255 B:212
 		tv.setText("Message Text View");
@@ -98,11 +90,11 @@ public class Main extends Activity {
 		@Override
 		public void onClick(View v) {
 			stateManager.setState(State.GENERATE_MESH);
-			DelaunayTriangulationBuilder dtb = new DelaunayTriangulationBuilder();
-			ArrayList<Coordinate> vertices = wv.getVertices();
-			dtb.setSites(vertices);
-			MultiLineString mls = (MultiLineString)dtb.getEdges(new GeometryFactory());
-			wv.setEdges(mls);
+			
+			TriangleMeshBuilder meshBuilder = new TriangleMeshBuilder((float)(wv.getOutline().getMinlen()*1.3));
+			meshBuilder.setOutline(wv.getOutline());
+			wv.setVertices(meshBuilder.getVertices());
+			wv.setIndices(meshBuilder.getIndices());
 			stateManager.setState(State.CALC_PHYSICS);
 			wv.reflesh();
 		}

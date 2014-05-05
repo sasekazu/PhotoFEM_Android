@@ -3,16 +3,22 @@ package info.sasekazu.photofem_android;
 import java.util.ArrayList;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.LinearRing;
 
 public class Outline {
 
 	private ArrayList<ClosedCurve> cc;	
-	private int minlen;	// Minimum distance between each vertex
+	private float minlen;	// Minimum distance between each vertex
 	
-	public Outline(int minlen) {
+	public Outline(float minlen) {
 		this.minlen = minlen;
 		cc = new ArrayList<ClosedCurve>();
 		cc.add(new ClosedCurve(minlen));
+	}
+	
+	public Outline(Outline obj){
+		this.cc = new ArrayList<ClosedCurve>(obj.cc);
+		this.minlen = obj.getMinlen();
 	}
 	
 	public boolean add(Coordinate coord){
@@ -49,16 +55,6 @@ public class Outline {
 		cc.add(new ClosedCurve(minlen));
 	}
 	
-	public ArrayList<Coordinate> getVertices(){
-		ArrayList<Coordinate> tmp = new ArrayList<Coordinate>();
-		for(int i=0; i<cc.size(); i++){
-			tmp.addAll(cc.get(i).getVertices());
-		}
-		return tmp;
-	}
-
-
-
 	
 	// is**
 	
@@ -66,5 +62,38 @@ public class Outline {
 		return cc.get(cc.size()-1).isClosed();
 	}
 	
+	// getter
 	
+	public float getMinlen() {
+		return minlen;
+	}
+
+	public ArrayList<Coordinate> getVertices(){
+		int closedCount;
+		if(cc.get(cc.size()-1).isClosed()){
+			closedCount = cc.size();
+		}else{
+			closedCount = cc.size()-1;
+		}
+		ArrayList<Coordinate> tmp = new ArrayList<Coordinate>();
+		for(int i=0; i<closedCount; i++){
+			tmp.addAll(cc.get(i).getVertices());
+		}
+		return tmp;
+	}
+
+	public ArrayList<LinearRing> getLinearRings(){
+		int closedCount;
+		if(cc.get(cc.size()-1).isClosed()){
+			closedCount = cc.size();
+		}else{
+			closedCount = cc.size()-1;
+		}
+		ArrayList<LinearRing> tmp = new ArrayList<LinearRing>();
+		for(int i=0; i<closedCount; i++){
+			tmp.add(cc.get(i).getLinearRing());
+		}
+		return tmp;
+	}
+
 }
