@@ -1,3 +1,11 @@
+/**
+ * PhotoFEM_Android.java
+ * this class includes 
+ * 	main function,
+ * 	layout design,
+ * 	event handling (button)
+ */
+
 package info.sasekazu.photofem_android;
 
 import info.sasekazu.photofem_android.StateManager.State;
@@ -90,9 +98,8 @@ public class Main extends Activity {
 		@Override
 		public void onClick(View v) {
 			stateManager.setState(State.GENERATE_MESH);
-			
 			TriangleMeshBuilder meshBuilder = new TriangleMeshBuilder((float)(wv.getOutline().getMinlen()*1.3));
-			meshBuilder.setOutline(wv.getOutline());
+			meshBuilder.buildMesh(wv.getOutline());
 			wv.setVertices(meshBuilder.getVertices());
 			wv.setIndices(meshBuilder.getIndices());
 			stateManager.setState(State.CALC_PHYSICS);

@@ -1,5 +1,8 @@
 /**
- * 
+ * WorldView
+ * this class includes:
+ * 	2D graphics process
+ * 	Event handling (Touch)
  */
 package info.sasekazu.photofem_android;
 
@@ -27,9 +30,9 @@ public class WorldView extends View {
 	private boolean stateInitFlag = false; 
 	private StateManager stateManager;
 	private Outline outline = new Outline(40);
-	
-	private float[] vtx;
-	private int[] idx;
+
+	private float[][] vtx;
+	private int[][] idx;
 
 	public WorldView(Context context) {
 		super(context);
@@ -79,25 +82,22 @@ public class WorldView extends View {
 			
 			// Draw vertices
 			paint.setStyle(Paint.Style.FILL_AND_STROKE);
-			int vertnum = vtx.length/3;
-			for(int i=0; i<vertnum; i++){
-				canvas.drawCircle(vtx[3*i+0], vtx[3*i+1], 3, paint);
+			for(int i=0; i<vtx.length; i++){
+				canvas.drawCircle(vtx[i][0], vtx[i][1], 3, paint);
 			}
 			
 			// Draw triangles
-			int trinum = idx.length/3;
 			path.reset();
-			for(int i=0; i<trinum; i++){
-				path.moveTo(vtx[3*idx[3*i+0]+0], vtx[3*idx[3*i+0]+1]);
-				path.lineTo(vtx[3*idx[3*i+1]+0], vtx[3*idx[3*i+1]+1]);
-				path.lineTo(vtx[3*idx[3*i+2]+0], vtx[3*idx[3*i+2]+1]);
-				path.lineTo(vtx[3*idx[3*i+0]+0], vtx[3*idx[3*i+0]+1]);
+			for(int i=0; i<idx.length; i++){
+				path.moveTo(vtx[idx[i][0]][0], vtx[idx[i][0]][1]);
+				path.lineTo(vtx[idx[i][1]][0], vtx[idx[i][1]][1]);
+				path.lineTo(vtx[idx[i][2]][0], vtx[idx[i][2]][1]);
+				path.lineTo(vtx[idx[i][0]][0], vtx[idx[i][0]][1]);
 			}
 			paint.setStyle(Paint.Style.STROKE);
 			paint.setStrokeWidth(2);
 			canvas.drawPath(path, paint);
 			paint.setStrokeWidth(1);
-			
 		}
 	}
 
@@ -142,7 +142,7 @@ public class WorldView extends View {
 	}
 	
 	public Outline getOutline(){
-		return new Outline(outline);
+		return outline;
 	}
 	
 	// setter
@@ -153,11 +153,16 @@ public class WorldView extends View {
 		this.stateInitFlag = true;	// now onDraw() goes actual draw phase
 	}
 	
-	public void setVertices(float vert[]){
+	public void setVertices(float vert[][]){
 		vtx = vert.clone();
 	}
 	
-	public void setIndices(int indices[]){
+	public void setIndices(int indices[][]){
 		this.idx = indices.clone();
 	}
+
+	public void setOutline(Outline outline) {
+		this.outline = outline;
+	}
+
 }
