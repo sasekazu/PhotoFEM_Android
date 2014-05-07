@@ -25,11 +25,14 @@ public class Main extends Activity {
 	
 	StateManager stateManager;
 	
+	
 	private WorldView wv;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		// hey
 
 		// get display size
 		WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
